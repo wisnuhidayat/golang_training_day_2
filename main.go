@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"runtime"
 	"strconv"
+	"strings"
 )
 
 var clear map[string]func()
@@ -199,7 +200,7 @@ func editProduk(adminScanner *bufio.Scanner) {
 		fmt.Println()
 		fmt.Println("==============================")
 		fmt.Println()
-		fmt.Println("INPUT DATA PRODUK BARU")
+		fmt.Println("INPUT DATA PRODUK")
 		fmt.Printf("NAMA PRODUK : ")
 		adminScanner.Scan()
 		item.name = adminScanner.Text()
@@ -263,7 +264,7 @@ menuAdmin:
 		fmt.Println("2. EDIT DATA USER")
 		fmt.Println("3. TAMBAH KE KERANJANG")
 		fmt.Println("4. LIHAT DATA KERANJANG")
-		fmt.Println("5. LIHAT DATA KERANJANG")
+		fmt.Println("5. HAPUS DATA KERANJANG")
 		fmt.Println("6. PEMBAYARAN")
 		fmt.Println("0. KELUAR")
 		fmt.Printf("> ")
@@ -274,6 +275,14 @@ menuAdmin:
 			lihatDataUser(userScanner)
 		case "2":
 			editDataUser(userScanner)
+		case "3":
+			tambahKeranjang(userScanner)
+		case "4":
+			fmt.Println("lihatKeranjang(userScanner)")
+		case "5":
+			fmt.Println("hapusKeranjang(userScanner")
+		case "6":
+			fmt.Println("pembayaran()")
 		case "0":
 			fmt.Println("0")
 			break menuAdmin
@@ -283,20 +292,75 @@ menuAdmin:
 
 func lihatDataUser(userScanner *bufio.Scanner) {
 	clearScreen()
-	fmt.Println("DATA USER")
-	fmt.Println()
-	for _, v := range items {
-		fmt.Println("KODE PRODUK : " + v.id)
-		fmt.Println("NAMA PRODUK : " + v.name)
-		fmt.Println("JUMLAH BARANG : " + strconv.Itoa(v.stock))
-		fmt.Println("HARGA SATUAN : " + strconv.Itoa(v.price))
+	fmt.Printf("LIHAT DATA USER\n\n")
+	fmt.Printf("MASUKKAN NAMA USER : ")
+	userScanner.Scan()
+	namaUser := userScanner.Text()
+	if user, found := customers[namaUser]; found {
+		fmt.Println("EMAIL : " + user.email)
+		fmt.Println("PHONE : " + user.phone)
+		fmt.Println("ALAMAT ASAL : " + user.defaultAddress.streetName + " " + user.defaultAddress.city + " " + user.defaultAddress.postalCode)
+		fmt.Println("ALAMAT PENGIRIMAN : " + user.shippingAddress.streetName + " " + user.shippingAddress.city + " " + user.shippingAddress.postalCode)
+	} else {
 		fmt.Println()
+		fmt.Println("USER TIDAK DITEMUKAN")
 	}
 
+	fmt.Println()
 	fmt.Println("TEKAN SEMBARANG TOMBOL UNTUK KEMBALI")
 	bufio.NewReader(os.Stdin).ReadString('\n')
 }
 
 func editDataUser(userScanner *bufio.Scanner) {
 	clearScreen()
+	fmt.Printf("EDIT USER\n\n")
+	fmt.Printf("MASUKKAN NAMA USER : ")
+	userScanner.Scan()
+	namaUser := userScanner.Text()
+	if user, found := customers[namaUser]; found {
+		var customer customer
+
+		fmt.Println("EMAIL : " + user.email)
+		fmt.Println("PHONE : " + user.phone)
+		fmt.Println("ALAMAT ASAL : " + user.defaultAddress.streetName + " " + user.defaultAddress.city + " " + user.defaultAddress.postalCode)
+		fmt.Println("ALAMAT PENGIRIMAN : " + user.shippingAddress.streetName + " " + user.shippingAddress.city + " " + user.shippingAddress.postalCode)
+		fmt.Println()
+		fmt.Println("==============================")
+		fmt.Println()
+		fmt.Println("INPUT DATA USER")
+		fmt.Printf("EMAIL : ")
+		userScanner.Scan()
+		customer.email = userScanner.Text()
+		fmt.Printf("PHONE : ")
+		userScanner.Scan()
+		customer.phone = userScanner.Text()
+		fmt.Printf("ALAMAT ASAL (NAMA JALAN;KOTA;KODEPOS) : ")
+		userScanner.Scan()
+		alamatAsal := strings.Split(userScanner.Text(), ";")
+		customer.defaultAddress.streetName = alamatAsal[0]
+		customer.defaultAddress.city = alamatAsal[1]
+		customer.defaultAddress.postalCode = alamatAsal[2]
+		fmt.Printf("ALAMAT PENGIRIMAN (NAMA JALAN;KOTA;KODEPOS) : ")
+		userScanner.Scan()
+		alamatPengiriman := strings.Split(userScanner.Text(), ";")
+		customer.shippingAddress.streetName = alamatPengiriman[0]
+		customer.shippingAddress.city = alamatPengiriman[1]
+		customer.shippingAddress.postalCode = alamatPengiriman[2]
+		customer.name = user.name
+
+		customers[customer.name] = customer
+
+		fmt.Println()
+		fmt.Println("USER BERHASIL DIEDIT")
+	} else {
+		fmt.Println()
+		fmt.Println("USER TIDAK DITEMUKAN")
+	}
+
+	fmt.Println("TEKAN SEMBARANG TOMBOL UNTUK KEMBALI")
+	bufio.NewReader(os.Stdin).ReadString('\n')
+}
+
+func tambahKeranjang(userScanner *bufio.Scanner) {
+
 }
