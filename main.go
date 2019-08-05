@@ -272,6 +272,8 @@ menuAdmin:
 		switch pilihanAdmin {
 		case "1":
 			lihatDataUser(userScanner)
+		case "2":
+			editDataUser(userScanner)
 		case "0":
 			fmt.Println("0")
 			break menuAdmin
@@ -293,4 +295,8 @@ func lihatDataUser(userScanner *bufio.Scanner) {
 
 	fmt.Println("TEKAN SEMBARANG TOMBOL UNTUK KEMBALI")
 	bufio.NewReader(os.Stdin).ReadString('\n')
+}
+
+func editDataUser(userScanner *bufio.Scanner) {
+	clearScreen()
 }
