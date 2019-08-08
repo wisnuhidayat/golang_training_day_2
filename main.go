@@ -20,7 +20,7 @@ func init() {
 		cmd.Run()
 	}
 	clear["darwin"] = func() {
-		cmd := exec.Command("clear") //Linux example, its tested
+		cmd := exec.Command("clear") //MacOs example, its tested
 		cmd.Stdout = os.Stdout
 		cmd.Run()
 	}
@@ -261,11 +261,13 @@ menuAdmin:
 		clearScreen()
 		fmt.Println("MENU USER")
 		fmt.Println("1. LIHAT DATA USER")
-		fmt.Println("2. EDIT DATA USER")
-		fmt.Println("3. TAMBAH KE KERANJANG")
-		fmt.Println("4. LIHAT DATA KERANJANG")
-		fmt.Println("5. HAPUS DATA KERANJANG")
-		fmt.Println("6. PEMBAYARAN")
+		fmt.Println("2. TAMBAH DATA USER")
+		fmt.Println("3. EDIT DATA USER")
+		fmt.Println("4. HAPUS DATA USER")
+		fmt.Println("5. TAMBAH KE KERANJANG")
+		fmt.Println("6. LIHAT DATA KERANJANG")
+		fmt.Println("7. HAPUS DATA KERANJANG")
+		fmt.Println("8. PEMBAYARAN")
 		fmt.Println("0. KELUAR")
 		fmt.Printf("> ")
 		menuScanner.Scan()
@@ -274,14 +276,16 @@ menuAdmin:
 		case "1":
 			lihatDataUser(userScanner)
 		case "2":
-			editDataUser(userScanner)
+			tambahDataUser(userScanner)
 		case "3":
-			tambahKeranjang(userScanner)
+			editDataUser(userScanner)
 		case "4":
-			fmt.Println("lihatKeranjang(userScanner)")
+			tambahKeranjang(userScanner)
 		case "5":
-			fmt.Println("hapusKeranjang(userScanner")
+			fmt.Println("lihatKeranjang(userScanner)")
 		case "6":
+			fmt.Println("hapusKeranjang(userScanner")
+		case "7":
 			fmt.Println("pembayaran()")
 		case "0":
 			fmt.Println("0")
@@ -307,6 +311,40 @@ func lihatDataUser(userScanner *bufio.Scanner) {
 	}
 
 	fmt.Println()
+	fmt.Println("TEKAN SEMBARANG TOMBOL UNTUK KEMBALI")
+	bufio.NewReader(os.Stdin).ReadString('\n')
+}
+
+func tambahDataUser(userScanner *bufio.Scanner) {
+	clearScreen()
+	var customer customer
+	fmt.Printf("TAMBAH USER\n\n")
+	fmt.Printf("NAMA USER : ")
+	userScanner.Scan()
+	customer.name = userScanner.Text()
+	fmt.Printf("EMAIL : ")
+	userScanner.Scan()
+	customer.email = userScanner.Text()
+	fmt.Printf("PHONE : ")
+	userScanner.Scan()
+	customer.phone = userScanner.Text()
+	fmt.Printf("ALAMAT ASAL (NAMA JALAN;KOTA;KODEPOS) : ")
+	userScanner.Scan()
+	alamatAsal := strings.Split(userScanner.Text(), ";")
+	customer.defaultAddress.streetName = alamatAsal[0]
+	customer.defaultAddress.city = alamatAsal[1]
+	customer.defaultAddress.postalCode = alamatAsal[2]
+	fmt.Printf("ALAMAT PENGIRIMAN (NAMA JALAN;KOTA;KODEPOS) : ")
+	userScanner.Scan()
+	alamatPengiriman := strings.Split(userScanner.Text(), ";")
+	customer.shippingAddress.streetName = alamatPengiriman[0]
+	customer.shippingAddress.city = alamatPengiriman[1]
+	customer.shippingAddress.postalCode = alamatPengiriman[2]
+
+	customers[customer.name] = customer
+
+	fmt.Println()
+	fmt.Println("USER BERHASIL DISIMPAN")
 	fmt.Println("TEKAN SEMBARANG TOMBOL UNTUK KEMBALI")
 	bufio.NewReader(os.Stdin).ReadString('\n')
 }
@@ -362,5 +400,14 @@ func editDataUser(userScanner *bufio.Scanner) {
 }
 
 func tambahKeranjang(userScanner *bufio.Scanner) {
+	clearScreen()
+	fmt.Printf("TAMBAH KERANJANG\n\n")
+	fmt.Printf("MASUKKAN NAMA USER : ")
+	userScanner.Scan()
+	/*
+		namaUser := userScanner.Text()
+		if user, found := customers[namaUser]; found {
 
+		}
+	*/
 }
