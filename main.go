@@ -280,13 +280,15 @@ menuAdmin:
 		case "3":
 			editDataUser(userScanner)
 		case "4":
-			tambahKeranjang(userScanner)
+			hapusDataUser(userScanner)
 		case "5":
-			fmt.Println("lihatKeranjang(userScanner)")
+			tambahKeranjang(userScanner)
 		case "6":
-			fmt.Println("hapusKeranjang(userScanner")
+			lihatKeranjang(userScanner)
 		case "7":
-			fmt.Println("pembayaran()")
+			hapusKeranjang(userScanner)
+		case "8":
+			pembayaran(userScanner)
 		case "0":
 			fmt.Println("0")
 			break menuAdmin
@@ -399,15 +401,207 @@ func editDataUser(userScanner *bufio.Scanner) {
 	bufio.NewReader(os.Stdin).ReadString('\n')
 }
 
+func hapusDataUser(userScanner *bufio.Scanner) {
+	clearScreen()
+	fmt.Printf("MASUKKAN NAMA USER\n\n")
+	userScanner.Scan()
+	namaUser := userScanner.Text()
+	if user, found := customers[namaUser]; found {
+		fmt.Println("EMAIL : " + user.email)
+		fmt.Println("PHONE : " + user.phone)
+		fmt.Println("ALAMAT ASAL : " + user.defaultAddress.streetName + " " + user.defaultAddress.city + " " + user.defaultAddress.postalCode)
+		fmt.Println("ALAMAT PENGIRIMAN : " + user.shippingAddress.streetName + " " + user.shippingAddress.city + " " + user.shippingAddress.postalCode)
+		fmt.Println()
+		fmt.Println("ANDA YAKIN UNTUK MENGHAPUS USER DENGAN NAMA " + user.name + " ? Y / N")
+		userScanner.Scan()
+		if userScanner.Text() == "Y" || userScanner.Text() == "y" {
+			delete(customers, user.name)
+
+			fmt.Println()
+			fmt.Println("USER BERHASIL DIHAPUS")
+		}
+	} else {
+		fmt.Println()
+		fmt.Println("USER TIDAK DITEMUKAN")
+	}
+
+	fmt.Println("TEKAN SEMBARANG TOMBOL UNTUK KEMBALI")
+	bufio.NewReader(os.Stdin).ReadString('\n')
+}
+
 func tambahKeranjang(userScanner *bufio.Scanner) {
 	clearScreen()
 	fmt.Printf("TAMBAH KERANJANG\n\n")
 	fmt.Printf("MASUKKAN NAMA USER : ")
 	userScanner.Scan()
-	/*
-		namaUser := userScanner.Text()
-		if user, found := customers[namaUser]; found {
+	namaUser := userScanner.Text()
+	if user, found := customers[namaUser]; found {
+		fmt.Println("EMAIL : " + user.email)
+		fmt.Println("PHONE : " + user.phone)
+		fmt.Println("ALAMAT ASAL : " + user.defaultAddress.streetName + " " + user.defaultAddress.city + " " + user.defaultAddress.postalCode)
+		fmt.Println("ALAMAT PENGIRIMAN : " + user.shippingAddress.streetName + " " + user.shippingAddress.city + " " + user.shippingAddress.postalCode)
+		fmt.Println()
+		fmt.Println("==============================")
+		fmt.Println()
+		fmt.Printf("MASUKKAN KODE PRODUK : ")
+		userScanner.Scan()
+		kodeProduk := userScanner.Text()
+		if produk, found := items[kodeProduk]; found {
+			var cart cart
 
+			jumlahBarang := produk.stock
+
+			fmt.Println("NAMA PRODUK : " + produk.name)
+			fmt.Println("JUMLAH BARANG : " + strconv.Itoa(produk.stock))
+			fmt.Println("HARGA SATUAN : " + strconv.Itoa(produk.price))
+			fmt.Printf("MASUKKAN JUMLAH YANG INGIN DIBELI : ")
+			userScanner.Scan()
+			orderedQty, _ := strconv.Atoi(userScanner.Text())
+			if orderedQty <= jumlahBarang {
+				cart.customer = user
+				cart.orderedQty = orderedQty
+				cart.item = produk
+				carts[user.name] = cart
+
+				produk.stock = produk.stock - orderedQty
+				items[produk.id] = produk
+
+				fmt.Println()
+				fmt.Println("BERHASIL MENAMBAH KERANJANG")
+			} else {
+				fmt.Println()
+				fmt.Println("JUMLAH PRODUK YANG INGIN DIBELI LEBIH DARI STOK YANG TERSEDIA")
+			}
+		} else {
+			fmt.Println()
+			fmt.Println("PRODUK TIDAK DITEMUKAN")
 		}
-	*/
+	} else {
+		fmt.Println()
+		fmt.Println("USER TIDAK DITEMUKAN")
+	}
+
+	fmt.Println("TEKAN SEMBARANG TOMBOL UNTUK KEMBALI")
+	bufio.NewReader(os.Stdin).ReadString('\n')
+}
+
+func lihatKeranjang(userScanner *bufio.Scanner) {
+	clearScreen()
+	fmt.Printf("LIHAT DATA KERANJANG\n\n")
+	fmt.Printf("MASUKKAN NAMA USER : ")
+	userScanner.Scan()
+	namaUser := userScanner.Text()
+	if keranjang, found := carts[namaUser]; found {
+		var hargaSatuan int
+		var totalHarga int
+
+		hargaSatuan = keranjang.item.price
+		totalHarga = keranjang.orderedQty * hargaSatuan
+
+		fmt.Println("KODE PRODUK : " + keranjang.item.id)
+		fmt.Println("NAMA PRODUK : " + keranjang.item.name)
+		fmt.Println("JUMLAH : " + strconv.Itoa(keranjang.orderedQty))
+		fmt.Println("HARGA SATUAN : " + strconv.Itoa(hargaSatuan))
+		fmt.Println("TOTAL HARGA : " + strconv.Itoa(totalHarga))
+		fmt.Println("EMAIL : " + keranjang.customer.email)
+		fmt.Println("PHONE : " + keranjang.customer.phone)
+		fmt.Println("ALAMAT ASAL : " + keranjang.customer.defaultAddress.streetName + " " + keranjang.customer.defaultAddress.city + " " + keranjang.customer.defaultAddress.postalCode)
+		fmt.Println("ALAMAT PENGIRIMAN : " + keranjang.customer.shippingAddress.streetName + " " + keranjang.customer.shippingAddress.city + " " + keranjang.customer.shippingAddress.postalCode)
+	} else {
+		fmt.Println()
+		fmt.Println("USER TIDAK DITEMUKAN")
+	}
+
+	fmt.Println()
+	fmt.Println("TEKAN SEMBARANG TOMBOL UNTUK KEMBALI")
+	bufio.NewReader(os.Stdin).ReadString('\n')
+}
+
+func hapusKeranjang(userScanner *bufio.Scanner) {
+	clearScreen()
+	fmt.Printf("HAPUS DATA KERANJANG\n\n")
+	fmt.Printf("MASUKKAN NAMA USER : ")
+	userScanner.Scan()
+	namaUser := userScanner.Text()
+	if keranjang, found := carts[namaUser]; found {
+		var hargaSatuan int
+		var totalHarga int
+
+		hargaSatuan = keranjang.item.price
+		totalHarga = keranjang.orderedQty * hargaSatuan
+
+		fmt.Println("KODE PRODUK : " + keranjang.item.id)
+		fmt.Println("NAMA PRODUK : " + keranjang.item.name)
+		fmt.Println("JUMLAH : " + strconv.Itoa(keranjang.orderedQty))
+		fmt.Println("HARGA SATUAN : " + strconv.Itoa(hargaSatuan))
+		fmt.Println("TOTAL HARGA : " + strconv.Itoa(totalHarga))
+		fmt.Println("EMAIL : " + keranjang.customer.email)
+		fmt.Println("PHONE : " + keranjang.customer.phone)
+		fmt.Println("ALAMAT ASAL : " + keranjang.customer.defaultAddress.streetName + " " + keranjang.customer.defaultAddress.city + " " + keranjang.customer.defaultAddress.postalCode)
+		fmt.Println("ALAMAT PENGIRIMAN : " + keranjang.customer.shippingAddress.streetName + " " + keranjang.customer.shippingAddress.city + " " + keranjang.customer.shippingAddress.postalCode)
+
+		fmt.Println()
+		fmt.Println("ANDA YAKIN UNTUK MENGHAPUS DATA KERANJANG? Y / N")
+		userScanner.Scan()
+		if userScanner.Text() == "Y" || userScanner.Text() == "y" {
+			var item item
+
+			item = items[keranjang.item.id]
+			item.stock = item.stock + keranjang.orderedQty
+			items[keranjang.item.id] = item
+
+			delete(carts, namaUser)
+
+			fmt.Println()
+			fmt.Println("DATA KERANJANG BERHASIL DIHAPUS")
+		}
+	} else {
+		fmt.Println()
+		fmt.Println("DATA KERANJANG TIDAK DITEMUKAN")
+	}
+
+	fmt.Println()
+	fmt.Println("TEKAN SEMBARANG TOMBOL UNTUK KEMBALI")
+	bufio.NewReader(os.Stdin).ReadString('\n')
+}
+
+func pembayaran(userScanner *bufio.Scanner) {
+	clearScreen()
+	clearScreen()
+	fmt.Printf("PEMBAYARAN\n\n")
+	fmt.Printf("MASUKKAN NAMA USER : ")
+	userScanner.Scan()
+	namaUser := userScanner.Text()
+	if keranjang, found := carts[namaUser]; found {
+		var hargaSatuan int
+		var totalHarga int
+
+		hargaSatuan = keranjang.item.price
+		totalHarga = keranjang.orderedQty * hargaSatuan
+
+		fmt.Println("KODE PRODUK : " + keranjang.item.id)
+		fmt.Println("NAMA PRODUK : " + keranjang.item.name)
+		fmt.Println("JUMLAH : " + strconv.Itoa(keranjang.orderedQty))
+		fmt.Println("HARGA SATUAN : " + strconv.Itoa(hargaSatuan))
+		fmt.Println("TOTAL HARGA : " + strconv.Itoa(totalHarga))
+		fmt.Println("EMAIL : " + keranjang.customer.email)
+		fmt.Println("PHONE : " + keranjang.customer.phone)
+		fmt.Println("ALAMAT ASAL : " + keranjang.customer.defaultAddress.streetName + " " + keranjang.customer.defaultAddress.city + " " + keranjang.customer.defaultAddress.postalCode)
+		fmt.Println("ALAMAT PENGIRIMAN : " + keranjang.customer.shippingAddress.streetName + " " + keranjang.customer.shippingAddress.city + " " + keranjang.customer.shippingAddress.postalCode)
+
+		fmt.Println()
+		fmt.Println("ANDA YAKIN UNTUK MELAKUKAN PEMBAYARAN ? Y / N")
+		userScanner.Scan()
+		if userScanner.Text() == "Y" || userScanner.Text() == "y" {
+			fmt.Println()
+			fmt.Println("PEMBAYARAN BERHASIL DILAKUKAN")
+		}
+	} else {
+		fmt.Println()
+		fmt.Println("DATA KERANJANG TIDAK DITEMUKAN")
+	}
+
+	fmt.Println()
+	fmt.Println("TEKAN SEMBARANG TOMBOL UNTUK KEMBALI")
+	bufio.NewReader(os.Stdin).ReadString('\n')
 }
