@@ -454,6 +454,7 @@ func tambahKeranjang(userScanner *bufio.Scanner) {
 			fmt.Println("NAMA PRODUK : " + produk.name)
 			fmt.Println("JUMLAH BARANG : " + strconv.Itoa(produk.stock))
 			fmt.Println("HARGA SATUAN : " + strconv.Itoa(produk.price))
+			fmt.Println()
 			fmt.Printf("MASUKKAN JUMLAH YANG INGIN DIBELI : ")
 			userScanner.Scan()
 			orderedQty, _ := strconv.Atoi(userScanner.Text())
